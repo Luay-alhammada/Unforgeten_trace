@@ -64,23 +64,23 @@ from sklearn.preprocessing import MinMaxScaler
 import pydeck as pdk
 
 # Load data
-ur1 = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/refs/heads/main/%D9%85%D9%83%D8%A7%D9%86_%D8%A7%D9%84%D9%88%D9%84%D8%A7%D8%AF%D8%A9.csv"
+ur11 = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/refs/heads/main/%D9%85%D9%83%D8%A7%D9%86_%D8%A7%D9%84%D9%88%D9%84%D8%A7%D8%AF%D8%A9.csv"
 
 # Load Data
-df = load_data(url1)
+df_birthplace = load_data(url1)
 
 # Ensure lat/lon are numeric
-df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
-df["lon"] = pd.to_numeric(df["lon"], errors="coerce")
+df_birthplace["lat"] = df_birthplace.to_numeric(df_birthplace["lat"], errors="coerce")
+df_birthplace["lon"] = df_birthplace.to_numeric(df_birthplace["lon"], errors="coerce")
 
 # Define radius for scatter plot (in pixels for constant size)
 scaler = MinMaxScaler((5, 20))
-df["radius"] = scaler.fit_transform(df[["count"]])
+df_birthplace["radius"] = scaler.fit_transform(df_birthplace[["count"]])
 
 # Define scatter layer
 layer = pdk.Layer(
     "ScatterplotLayer",
-    data=df,
+    data=df_birthplace,
     get_position=["lon", "lat"],
     get_radius="radius",
     get_fill_color=[200, 30, 0, 160],
@@ -444,6 +444,7 @@ with col23:
 """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+
 
 
 

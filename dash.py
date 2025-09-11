@@ -62,7 +62,7 @@ from sklearn.preprocessing import MinMaxScaler
 import pydeck as pdk
 
 # Load data
-df = pd.read_csv("مكان_الولادة.csv")
+df = pd.read_csv("https://github.com/Luay-alhammada/Unforgeten_trace/blob/main/%D9%85%D9%83%D8%A7%D9%86_%D8%A7%D9%84%D9%88%D9%84%D8%A7%D8%AF%D8%A9.csv")
 
 # Ensure lat/lon are numeric
 df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
@@ -439,5 +439,6 @@ with col23:
 """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+
 
 

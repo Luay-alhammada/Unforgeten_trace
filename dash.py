@@ -68,10 +68,10 @@ url2 = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/main/%
 df_birthplace = load_data(url2)
 
 # Ensure lat/lon are numeric
-df_birthplace["lat"] = df_birthplace.to_numeric(df_birthplace["lat"], errors="coerce")
-df_birthplace["lon"] = df_birthplace.to_numeric(df_birthplace["lon"], errors="coerce")
+df_birthplace["lat"] = pd.to_numeric(df_birthplace["lat"], errors="coerce")
+df_birthplace["lon"] = pd.to_numeric(df_birthplace["lon"], errors="coerce")
 
-# Define radius for scatter plot (in pixels for constant size)
+# Scale radius based on count
 scaler = MinMaxScaler((5, 20))
 df_birthplace["radius"] = scaler.fit_transform(df_birthplace[["count"]])
 
@@ -89,27 +89,25 @@ layer = pdk.Layer(
 # View centered on Syria
 view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6)
 
-# Create the Deck object with the customized tooltip
+# Deck object with tooltip
 r = pdk.Deck(
     layers=[layer],
     initial_view_state=view_state,
     tooltip={
         "html": "<b>Birthplace:</b> {مكان الولادة}<br/><b>Cases:</b> {count}",
-        "style": {
-            "backgroundColor": "steelblue",
-            "color": "white"
-        }
+        "style": {"backgroundColor": "steelblue", "color": "white"}
     },
-    map_style="light"  # This is the key change
+    map_style="light"
 )
 
-# The rest of your Streamlit layout code goes here
+# Streamlit section
 with col2:
-    st.markdown("<h4 style='text-align: right; direction: rtl;'>1 -أماكن تولد المعتقلين </h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align: right; direction: rtl;'>1 - أماكن تولد المعتقلين </h4>", unsafe_allow_html=True)
     st.markdown("""
-<div dir='rtl' style='text-align: right; font-size: 16px;'>
-حوالي 40% من الاسماء تم ذكر اماكن تولدهم</div><br>
-""", unsafe_allow_html=True)
+    <div dir='rtl' style='text-align: right; font-size: 16px;'>
+    حوالي 40% من الأسماء تم ذكر أماكن تولدهم
+    </div><br>
+    """, unsafe_allow_html=True)
 
     st.pydeck_chart(r)
 
@@ -442,6 +440,7 @@ with col23:
 """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+
 
 
 

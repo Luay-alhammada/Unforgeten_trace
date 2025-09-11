@@ -10,12 +10,14 @@ st.set_page_config(
     layout="wide",              # 👈 this makes wide mode default
     initial_sidebar_state="expanded"  # optional
 )
+url = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/main/under_18_8.csv"
 
+@st.cache_data
+def load_data(url):
+    return pd.read_csv(url)
 
-# -------------------------------
 # Load Data
-# -------------------------------
-df = pd.read_csv("https://github.com/Luay-alhammada/Unforgeten_trace/blob/main/under_18_8.csv")
+df = load_data(url)
 df['date_in'] = pd.to_datetime(df['date_in'], errors='coerce')
 
 # -------------------------------
@@ -62,7 +64,10 @@ from sklearn.preprocessing import MinMaxScaler
 import pydeck as pdk
 
 # Load data
-df = pd.read_csv("https://github.com/Luay-alhammada/Unforgeten_trace/blob/main/%D9%85%D9%83%D8%A7%D9%86_%D8%A7%D9%84%D9%88%D9%84%D8%A7%D8%AF%D8%A9.csv")
+ur1 = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/main/under_18_8.csv"
+
+# Load Data
+df = load_data(url1)
 
 # Ensure lat/lon are numeric
 df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
@@ -439,6 +444,7 @@ with col23:
 """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+
 
 
 

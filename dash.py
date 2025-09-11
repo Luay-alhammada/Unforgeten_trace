@@ -63,11 +63,9 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import pydeck as pdk
 
-# Load data
-ur11 = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/refs/heads/main/%D9%85%D9%83%D8%A7%D9%86_%D8%A7%D9%84%D9%88%D9%84%D8%A7%D8%AF%D8%A9.csv"
+url2 = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/main/%D9%85%D9%83%D8%A7%D9%86_%D8%A7%D9%84%D9%88%D9%84%D8%A7%D8%AF%D8%A9.csv"
 
-# Load Data
-df_birthplace = load_data(url1)
+df_birthplace = load_data(url2)
 
 # Ensure lat/lon are numeric
 df_birthplace["lat"] = df_birthplace.to_numeric(df_birthplace["lat"], errors="coerce")
@@ -444,6 +442,7 @@ with col23:
 """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+
 
 
 

@@ -3,3 +3,5 @@ pandas
 matplotlib
 arabic_reshaper
 python-bidi
+scikit-learn
+

@@ -64,7 +64,7 @@ from sklearn.preprocessing import MinMaxScaler
 import pydeck as pdk
 
 # Load data
-ur1 = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/main/under_18_8.csv"
+ur1 = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/refs/heads/main/%D9%85%D9%83%D8%A7%D9%86_%D8%A7%D9%84%D9%88%D9%84%D8%A7%D8%AF%D8%A9.csv"
 
 # Load Data
 df = load_data(url1)
@@ -444,6 +444,7 @@ with col23:
 """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+
 
 
 

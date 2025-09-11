@@ -15,7 +15,7 @@ st.set_page_config(
 # -------------------------------
 # Load Data
 # -------------------------------
-df = pd.read_csv("under_18_8.csv")
+df = pd.read_csv("https://github.com/Luay-alhammada/Unforgeten_trace/blob/main/under_18_8.csv")
 df['date_in'] = pd.to_datetime(df['date_in'], errors='coerce')
 
 # -------------------------------
@@ -439,4 +439,5 @@ with col23:
 """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+
 

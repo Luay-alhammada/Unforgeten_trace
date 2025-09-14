@@ -5,39 +5,51 @@ import arabic_reshaper
 from bidi.algorithm import get_display
 
 st.set_page_config(
-    page_title="Unforgeten trace",        # optional
-    page_icon="📊",             # optional
-    layout="wide",              # 👈 this makes wide mode default
-    initial_sidebar_state="expanded"  # optional
+    page_title="Unforgeten trace",        
+    page_icon="📊",             
+    layout="wide",              
+    initial_sidebar_state="expanded"  
 )
+
+# -------------------------------
+# Load Data
+# -------------------------------
 url = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/main/under_18_8.csv"
 
 @st.cache_data
 def load_data(url):
     return pd.read_csv(url)
 
-# Load Data
 df = load_data(url)
 df['date_in'] = pd.to_datetime(df['date_in'], errors='coerce')
 
 # -------------------------------
-# Page Title
+# Page Title (Improved)
 # -------------------------------
-st.markdown("<h4 style='text-align: center; direction: rtl;'>الأطفال في سجلات فرع تحقيق المخابرات الجوية</h4>", unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True) # Adds a line break for spacing
-
 st.markdown("""
-<div style='text-align: right; direction: rtl;'>
-<h4 style='text-align: right;'>• <b>الموضوع:</b> الانتهاكات بحق الأطفال (دون سن الـ 18)</h4>
-<h4 style='text-align: right;'>• <b>الفترة الزمنية:</b> 2011 حتى 2016</h4>
-<h4 style='text-align: right;'>• <b>العدد الإجمالي:</b> 1600 سجل</h4>
-</div>
+    <div style='text-align: center; background-color:#f8f9fa; padding:15px; 
+                border-radius:12px; box-shadow:0 2px 4px rgba(0,0,0,0.1); 
+                direction: rtl;'>
+        <h2 style='margin:0; color:#2c3e50;'>الأطفال في سجلات فرع تحقيق المخابرات الجوية</h2>
+    </div>
 """, unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True) # Adds a line break for spacing
 
+st.divider()
 
 # -------------------------------
-# Layout: Left (Filters), Middle (Chart), Right (Pie Chart)
+# Metadata Card
+# -------------------------------
+st.markdown("""
+    <div style='background-color:#ffffff; padding:20px; border-radius:12px; 
+                box-shadow:0 2px 8px rgba(0,0,0,0.1); text-align:right; direction:rtl;'>
+        <h4>• <b>الموضوع:</b> الانتهاكات بحق الأطفال (دون سن الـ 18)</h4>
+        <h4>• <b>الفترة الزمنية:</b> 2011 حتى 2016</h4>
+        <h4>• <b>العدد الإجمالي:</b> 1600 سجل</h4>
+    </div>
+""", unsafe_allow_html=True)
+
+st.divider()
+
 # -------------------------------
 col1, col2,col4, col3 = st.columns([1, 4,1, 4])  # 1:4:4 ratio
 
@@ -440,6 +452,7 @@ with col23:
 """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+
 
 
 

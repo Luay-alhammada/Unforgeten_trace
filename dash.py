@@ -102,7 +102,7 @@ st.divider()
 years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
 years_with_all = ['جميع السنوات'] + years
 
-selected_year = st.selectbox("اختر السنة", years_with_all)
+selected_year = st.selectbox("اختر السنة", years_with_all, key="year_select")
 
 if selected_year == "جميع السنوات":
     df_filtered = df.copy()
@@ -436,6 +436,7 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 

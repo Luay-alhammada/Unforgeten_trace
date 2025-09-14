@@ -266,6 +266,8 @@ if selected_year == "جميع السنوات":
     df_filtered = df.copy()
 else:
     df_filtered = df[df['date_in'].dt.year == selected_year]
+
+
 with col10:
     st.markdown("<h4>5 - أماكن الاعتقال في الجوية</h4>", unsafe_allow_html=True)
     st.markdown(
@@ -435,6 +437,7 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 

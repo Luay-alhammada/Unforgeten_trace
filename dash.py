@@ -182,18 +182,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 col5, col6, col7, col8 = st.columns([1, 4, 1, 4])
 
 
-with col5:
-    # Example with custom size and bold
-    st.markdown('<h2 style="font-size:24px; font-family:Tajawal;">المرشحات</h2>', unsafe_allow_html=True)
 
-    years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
-    years_with_all = ['جميع السنوات'] + years
-    selected_year = st.selectbox("اختر السنة", years_with_all)
-
-if selected_year == "جميع السنوات":
-    df_filtered = df.copy()
-else:
-    df_filtered = df[df['date_in'].dt.year == selected_year]
 
 
 # Right column: Pie chart
@@ -265,6 +254,18 @@ with col6:
 
 col9, col10, col11, col12 = st.columns([1, 4, 1, 4])
 
+with col9:
+    # Example with custom size and bold
+    st.markdown('<h2 style="font-size:24px; font-family:Tajawal;">المرشحات</h2>', unsafe_allow_html=True)
+
+    years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
+    years_with_all = ['جميع السنوات'] + years
+    selected_year = st.selectbox("اختر السنة", years_with_all)
+
+if selected_year == "جميع السنوات":
+    df_filtered = df.copy()
+else:
+    df_filtered = df[df['date_in'].dt.year == selected_year]
 with col10:
     st.markdown("<h4>5 - أماكن الاعتقال في الجوية</h4>", unsafe_allow_html=True)
     st.markdown(
@@ -434,6 +435,7 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 

@@ -104,7 +104,16 @@ col1, col2, col4, col3 = st.columns([1, 4, 1, 4])
 # -------------------------------
 # Left Column: Filters
 # -------------------------------
+with col1:
+    st.header("المرشحات")
+    years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
+    years_with_all = ['جميع السنوات'] + years
+    selected_year = st.selectbox("اختر السنة", years_with_all)
 
+if selected_year == "جميع السنوات":
+    df_filtered = df.copy()
+else:
+    df_filtered = df[df['date_in'].dt.year == selected_year]
 
 # -------------------------------
 # Middle Column: Map
@@ -181,10 +190,6 @@ st.markdown("<br>", unsafe_allow_html=True)
 # --- New Section ---
 col5, col6, col7, col8 = st.columns([1, 4, 1, 4])
 
-
-
-
-
 # Right column: Pie chart
 with col8:
     st.markdown("<h4>2 - أسماء الدوريات التي قامت بإعتقالهم</h4>", unsafe_allow_html=True)
@@ -253,21 +258,6 @@ with col6:
 
 
 col9, col10, col11, col12 = st.columns([1, 4, 1, 4])
-
-
-with col9:
-    # Example with custom size and bold
-    st.markdown('<h2 style="font-size:24px; font-family:Tajawal;">المرشحات</h2>', unsafe_allow_html=True)
-
-    years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
-    years_with_all = ['جميع السنوات'] + years
-    selected_year = st.selectbox("اختر السنة", years_with_all)
-
-if selected_year == "جميع السنوات":
-    df_filtered = df.copy()
-else:
-    df_filtered = df[df['date_in'].dt.year == selected_year]
-
 
 with col10:
     st.markdown("<h4>5 - أماكن الاعتقال في الجوية</h4>", unsafe_allow_html=True)
@@ -342,6 +332,12 @@ with col15:
 <br>قرى الأطفال SOS, مركز إيواء ضاحية قدسيا - جمعية المبرة.
 </p>
 <br>
+<p><strong>التحفظ للمبادلة:</strong></p>
+<p>كشفت العديد من السجلات عن التحفظ على الأطفال صراحةً، إما للضغط على ذويهم لتسليم أنفسهم أو لاستخدامهم في مفاوضات التبادل. أظهرت السجلات أيضًا وفاة عدد من الأطفال، وأيضا إلى إجراء مقابلات مع صحف وتلفزيونات محلية وعربية ودولية لتعزيز بروباغندا النظام.
+<br>
+وتكشف السجلات أيضًا عن وجود دعم مالي لإنتاج فيلم يركز على دور "أطفال المتطرفين الإسلاميين".
+</p>
+<br>
 <p><strong>محكمة الأحداث:</strong></p>
 <p>بعض الأطفال تمت إحالتهم إلى محكمة الأحداث خصوصًا بعد صدور تعميم مكتب الأمن الوطني رقم 8/2051 تاريخ 2016/6/10 يقضي بإحالة كافة الموقوفين الأحداث إلى محكمة الأحداث المختصة حكمًا مهما بلغت درجة الجرمية.</p>
 """, unsafe_allow_html=True)
@@ -368,23 +364,12 @@ with col17:
     plt.grid(axis='x', color='lightgray', linestyle='--', linewidth=0.5, alpha=0.7)
     plt.tight_layout()
     st.pyplot(fig)
-    # After your st.pyplot(fig) line
-col17.markdown("""
-<p><strong>التحفظ للمبادلة:</strong></p>
-<p>
-كشفت العديد من السجلات عن التحفظ على الأطفال صراحةً، إما للضغط على ذويهم لتسليم أنفسهم أو لاستخدامهم في مفاوضات التبادل. 
-أظهرت السجلات أيضًا وفاة عدد من الأطفال، وأيضا إلى إجراء مقابلات مع صحف وتلفزيونات محلية وعربية ودولية لتعزيز بروباغندا النظام.
-<br>
-وتكشف السجلات أيضًا عن وجود دعم مالي لإنتاج فيلم يركز على دور "أطفال المتطرفين الإسلاميين".
-</p>
-<br>
-""", unsafe_allow_html=True)
 
 
 col18, col19, col20, col21 = st.columns([1, 4, 1, 4])
 
 with col19:
-    st.markdown("<h3> 9 - التوزع السنوي</h3>", unsafe_allow_html=True)
+    st.markdown("<h3>التوزع السنوي</h3>", unsafe_allow_html=True)
 
     counts_monthly = df_filtered.groupby(df_filtered['date_in'].dt.to_period("M")).size()
     counts_monthly.index = counts_monthly.index.to_timestamp()
@@ -406,7 +391,7 @@ with col19:
 
 
 with col21:
-    st.markdown("<h3> 8 - مقتطفات من السجل</h3>", unsafe_allow_html=True)
+    st.markdown("<h3>مقتطفات من السجل</h3>", unsafe_allow_html=True)
     st.markdown("""
 <ol>
     <li>إخلاء سبيل المذكور وربطه بشكل رسمي لتقصي اخبار الاطفال المودعين لدى الادارة في قرية الاطفال sos</li>
@@ -431,20 +416,14 @@ with col23:
 </p>
 """, unsafe_allow_html=True)
 
+
+# -------------------------------
+# Author/Contact Info
+# -------------------------------
 st.divider()
 st.markdown("""
 <div class='metadata-card'>
-    <h5>• <b>تحليل وإعداد:</b> Luay Alhammada</h5>
-    <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
+    <h5>• <b>تحليل وإعداد:</b> [اسمك هنا]</h5>
+    <h5>• <b>للتواصل:</b> [بريدك الإلكتروني هنا]</h5>
 </div>
 """, unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
-

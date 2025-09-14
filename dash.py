@@ -254,6 +254,7 @@ with col6:
 
 col9, col10, col11, col12 = st.columns([1, 4, 1, 4])
 
+
 with col9:
     # Example with custom size and bold
     st.markdown('<h2 style="font-size:24px; font-family:Tajawal;">المرشحات</h2>', unsafe_allow_html=True)
@@ -437,6 +438,7 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 

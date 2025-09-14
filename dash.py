@@ -89,7 +89,7 @@ with col2:
         </div>
     """, unsafe_allow_html=True)
 
-    st.pydeck_chart(r)
+st.pydeck_chart(r)
 
 # -------------------------------
 # Right Column: Intro Text
@@ -423,6 +423,7 @@ with col23:
 """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+
 
 
 

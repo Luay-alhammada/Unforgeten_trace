@@ -99,6 +99,15 @@ st.markdown("""
 
 st.divider()
 
+    years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
+    years_with_all = ['جميع السنوات'] + years
+
+
+if selected_year == "جميع السنوات":
+    df_filtered = df.copy()
+else:
+    df_filtered = df[df['date_in'].dt.year == selected_year]
+
 col1, col2, col4, col3 = st.columns([1, 4, 1, 4])
 
 # -------------------------------
@@ -106,14 +115,8 @@ col1, col2, col4, col3 = st.columns([1, 4, 1, 4])
 # -------------------------------
 with col1:
     st.header("المرشحات")
-    years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
-    years_with_all = ['جميع السنوات'] + years
     selected_year = st.selectbox("اختر السنة", years_with_all)
 
-if selected_year == "جميع السنوات":
-    df_filtered = df.copy()
-else:
-    df_filtered = df[df['date_in'].dt.year == selected_year]
 
 # -------------------------------
 # Middle Column: Map
@@ -432,4 +435,5 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 

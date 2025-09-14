@@ -104,16 +104,7 @@ col1, col2, col4, col3 = st.columns([1, 4, 1, 4])
 # -------------------------------
 # Left Column: Filters
 # -------------------------------
-with col1:
-    st.header("المرشحات")
-    years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
-    years_with_all = ['جميع السنوات'] + years
-    selected_year = st.selectbox("اختر السنة", years_with_all)
 
-if selected_year == "جميع السنوات":
-    df_filtered = df.copy()
-else:
-    df_filtered = df[df['date_in'].dt.year == selected_year]
 
 # -------------------------------
 # Middle Column: Map
@@ -259,6 +250,16 @@ with col6:
 
 col9, col10, col11, col12 = st.columns([1, 4, 1, 4])
 
+with col9:
+    st.header("المرشحات")
+    years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
+    years_with_all = ['جميع السنوات'] + years
+    selected_year = st.selectbox("اختر السنة", years_with_all)
+
+if selected_year == "جميع السنوات":
+    df_filtered = df.copy()
+else:
+    df_filtered = df[df['date_in'].dt.year == selected_year]
 with col10:
     st.markdown("<h4>5 - أماكن الاعتقال في الجوية</h4>", unsafe_allow_html=True)
     st.markdown(
@@ -423,7 +424,8 @@ with col23:
 st.divider()
 st.markdown("""
 <div class='metadata-card'>
-    <h5>• <b>تحليل وإعداد:</b> [اسمك هنا]</h5>
-    <h5>• <b>للتواصل:</b> [بريدك الإلكتروني هنا]</h5>
+    <h5>• <b>تحليل وإعداد:</b> Luay Al Hammada</h5>
+    <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+

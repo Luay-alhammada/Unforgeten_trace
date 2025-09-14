@@ -423,7 +423,8 @@ with col23:
 st.divider()
 st.markdown("""
 <div class='metadata-card'>
-    <h5>• <b>تحليل وإعداد:</b> [اسمك هنا]</h5>
-    <h5>• <b>للتواصل:</b> [بريدك الإلكتروني هنا]</h5>
+    <h5>• <b>تحليل وإعداد:</b> Luay Al Hammada</h5>
+    <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+

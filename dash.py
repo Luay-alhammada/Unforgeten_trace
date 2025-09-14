@@ -50,108 +50,106 @@ st.markdown("""
 
 st.divider()
 
-col1, col2, col3 = st.columns([1.2, 3, 3])
+col1, col2,col4, col3 = st.columns([1, 4,1, 4])  # 1:4:4 ratio
 
-# ---------- Filters (left) ----------
+# -------------------------------
+# Left Column: Filters
+# -------------------------------
 with col1:
-    st.markdown("""
-        <div style='background-color:#ffffff; padding:12px; border-radius:10px; 
-                    box-shadow:0 1px 6px rgba(0,0,0,0.08); text-align:right; direction:rtl;'>
-            <h4 style='margin:0;'>🔎 الفلترة</h4>
-        </div>
-    """, unsafe_allow_html=True)
-
+    st.header("Filters")
     years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
-    years_with_all = ['كل السنوات'] + years
-    # Give a key to avoid Streamlit widget collisions
-    selected_year = st.selectbox("اختر السنة", years_with_all, key="year_select")
+    years_with_all = ['All Years'] + years
+    selected_year = st.selectbox("Select Year", years_with_all)
 
-# apply year filter
-if selected_year == 'كل السنوات':
+# Step 2: Filter the DataFrame based on the selection
+if selected_year == "All Years":
     df_filtered = df.copy()
 else:
-    df_filtered = df[df['date_in'].dt.year == int(selected_year)]
+    df_filtered = df[df['date_in'].dt.year == selected_year]
 
-# ---------- Prepare birthplace dataframe ----------
+# -------------------------------
+# Middle Column: Line Chart
+# -------------------------------
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+import pydeck as pdk
+
 url2 = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/main/%D9%85%D9%83%D8%A7%D9%86_%D8%A7%D9%84%D9%88%D9%84%D8%A7%D8%AF%D8%A9.csv"
-try:
-    df_birthplace = load_data(url2)
-except Exception as e:
-    df_birthplace = pd.DataFrame()
-    st.error(f"Failed to load birthplace CSV: {e}")
 
-# Ensure numeric lat/lon/count if present
-for col in ['lat', 'lon', 'count']:
-    if col in df_birthplace.columns:
-        df_birthplace[col] = pd.to_numeric(df_birthplace[col], errors='coerce')
+df_birthplace = load_data(url2)
 
-# drop rows without coordinates
-df_birthplace = df_birthplace.dropna(subset=['lat', 'lon']) if {'lat', 'lon'}.issubset(df_birthplace.columns) else pd.DataFrame()
+# Ensure lat/lon are numeric
+df_birthplace["lat"] = pd.to_numeric(df_birthplace["lat"], errors="coerce")
+df_birthplace["lon"] = pd.to_numeric(df_birthplace["lon"], errors="coerce")
 
-# ---------- Middle: Map (build deck before calling st.pydeck_chart) ----------
-if df_birthplace.empty:
-    with col2:
-        st.warning("لا توجد إحداثيات كافية لعرض الخريطة (check the birthplace CSV).")
-else:
-    # ensure 'count' exists
-    if 'count' not in df_birthplace.columns:
-        df_birthplace['count'] = 1
+# Scale radius based on count
+scaler = MinMaxScaler((5, 20))
+df_birthplace["radius"] = scaler.fit_transform(df_birthplace[["count"]])
 
-    # scale radius; use a sensible range depending on units (meters)
-    scaler = MinMaxScaler(feature_range=(4000, 20000))  # meters for visible circles
-    df_birthplace['radius'] = scaler.fit_transform(df_birthplace[['count']])
+# Define scatter layer
+layer = pdk.Layer(
+    "ScatterplotLayer",
+    data=df_birthplace,
+    get_position=["lon", "lat"],
+    get_radius="radius",
+    get_fill_color=[200, 30, 0, 160],
+    pickable=True,
+    radius_units="pixels",
+)
 
-    layer = pdk.Layer(
-        "ScatterplotLayer",
-        data=df_birthplace,
-        get_position=["lon", "lat"],
-        get_radius="radius",
-        radius_units="meters",
-        pickable=True,
-        auto_highlight=True,
-        get_fill_color=[29,144,255,180]
-    )
+# View centered on Syria
+view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6)
 
-    view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6, pitch=30)
-    deck = pdk.Deck(
-        layers=[layer],
-        initial_view_state=view_state,
-        tooltip={
-            "html": "<b>مكان الولادة:</b> {مكان الولادة} <br/> <b>عدد الحالات:</b> {count}",
-            "style": {"color": "white"}
-        },
-        map_style="light"
-    )
+# Deck object with tooltip
+r = pdk.Deck(
+    layers=[layer],
+    initial_view_state=view_state,
+    tooltip={
+        "html": "<b>Birthplace:</b> {مكان الولادة}<br/><b>Cases:</b> {count}",
+        "style": {"backgroundColor": "steelblue", "color": "white"}
+    },
+    map_style="light"
+)
 
-    with col2:
-        st.markdown("<h4 style='text-align:right; direction:rtl;'>🗺️ 1 - أماكن تولد المعتقلين</h4>", unsafe_allow_html=True)
-        st.pydeck_chart(deck)
-
-# ---------- Right: Intro (keep your full scrollable card) ----------
-with col3:
+# Streamlit section
+with col2:
+    st.markdown("<h4 style='text-align: right; direction: rtl;'>1 - أماكن تولد المعتقلين </h4>", unsafe_allow_html=True)
     st.markdown("""
-        <div style='background-color:#ffffff; padding:20px; border-radius:12px; 
-                    box-shadow:0 2px 8px rgba(0,0,0,0.1); height:500px; 
-                    overflow-y: scroll; text-align:right; direction:rtl;'>
-            <h4 style='margin-top:0; color:#2c3e50;'>📖 مقدمة</h4>
-            <p>
-            بعد انهيار النظام السوري في الثامن من ديسمبر/كانون الأول 2024، سُرّبت مجموعة كبيرة من الوثائق الاستخباراتية الحساسة، من بينها وثائق تعود إلى فرع التحقيق وإدارة المخابرات الجوية. هذه المواد جاءت على شكل مستندات وجداول بيانات (Excel)، وملفات نصية (Word)، وصور، وملفات (PDF)، حيث جرى استخراج المعلومات من الوثائق المصورة ودمجها في قاعدة بيانات متكاملة.
-            </p>
-            <p>
-            خضعت هذه البيانات لعمليات تنظيف وتصنيف دقيقة، مع التأكيد على أن التحقق من دقة وصحة جميع المعلومات هو عملية دائمة ومستمرة. ويُقدّم هذا التقرير تحليلًا خاصًا بقضية الأطفال دون سن الثامنة عشرة، ليكون جزءًا من سلسلة تحليلات ستُنشر تباعًا وتتناول موضوعات مختلفة من هذه السجلات.
-            </p>
-            <p>
-            بلغ إجمالي حجم قاعدة البيانات التي تم بناؤها حوالي 100 ألف سطر، يمثل كل سطر نقطة بيانات مستقلة. وقد تم تطبيق تقنيات متعددة لتصفية هذه البيانات والوصول إلى المعلومات ذات الصلة بالأطفال القُصّر. وتشير البيانات الأولية إلى أن 1600 طفل على الأقل قد ورد ذكرهم في هذه السجلات. هذا الرقم لا يمثل العدد الإجمالي، بل يقتصر على ما استطعنا رصده في الوثائق التي تغطي الفترة من 2011 إلى 2016.
-            </p>
-            <p>
-            تضمنت السجلات المسربة تصنيفات دقيقة من المصدر، شملت: تاريخ الاعتقال، تاريخ إرسال الإضبارة، تاريخ عودة الإضبارة، تاريخ الإفراج، تاريخ الميلاد، تاريخ الوفاة، الجرم، مقترح العميد رئيس الفرع، وقرار اللواء.
-            </p>
-            <p>
-            في هذا التقرير، يبدأ التحليل من بيانات مكان ولادة المعتقلين، مرورًا بالدوريات التي نفذت عمليات الاعتقال و الفروع الأمنية التي جرى تسليم المعتقلين إليها. كما يتناول انواع المحققين والاقسام واللجان الفاعلة و يستعرض التقرير ايضا طبيعة التهم الموجهة للمتقلين وما انتهت إليه قضاياهم، ويُختتم بعرض بياني يوضح التوزع الزمني لعدد المعتقلين خلال تلك السنوات ومقتطفات من السجل.
-            </p>
-        </div>
+    <div dir='rtl' style='text-align: right; font-size: 16px;'>
+    حوالي 40% من الأسماء تم ذكر أماكن تولدهم
+    </div><br>
     """, unsafe_allow_html=True)
-   # ===========================================================================
+
+    st.pydeck_chart(r)
+
+
+
+
+# -------------------------------
+with col3:
+    st.markdown("<h3 style='text-align: right; direction: rtl;'>مقدمة</h3>", unsafe_allow_html=True)
+    st.markdown("""
+<div style='direction: rtl;'>
+بعد انهيار النظام السوري في الثامن من ديسمبر/كانون الأول 2024، سُرّبت مجموعة كبيرة من الوثائق الاستخباراتية الحساسة، من بينها وثائق تعود إلى فرع التحقيق وإدارة المخابرات الجوية. هذه المواد جاءت على شكل مستندات وجداول بيانات (Excel)، وملفات نصية (Word)، وصور، وملفات (PDF)، حيث جرى استخراج المعلومات من الوثائق المصورة ودمجها في قاعدة بيانات متكاملة.
+
+خضعت هذه البيانات لعمليات تنظيف وتصنيف دقيقة، مع التأكيد على أن التحقق من دقة وصحة جميع المعلومات هو عملية دائمة ومستمرة. ويُقدّم هذا التقرير تحليلًا خاصًا بقضية الأطفال دون سن الثامنة عشرة، ليكون جزءًا من سلسلة تحليلات ستُنشر تباعًا وتتناول موضوعات مختلفة من هذه السجلات.
+
+بلغ إجمالي حجم قاعدة البيانات التي تم بناؤها حوالي 100 ألف سطر، يمثل كل سطر نقطة بيانات مستقلة. وقد تم تطبيق تقنيات متعددة لتصفية هذه البيانات والوصول إلى المعلومات ذات الصلة بالأطفال القُصّر. وتشير البيانات الأولية إلى أن 1600 طفل على الأقل قد ورد ذكرهم في هذه السجلات. هذا الرقم لا يمثل العدد الإجمالي، بل يقتصر على ما استطعنا رصده في الوثائق التي تغطي الفترة من 2011 إلى 2016.
+
+ تضمنت السجلات المسربة تصنيفات دقيقة من المصدر، شملت: تاريخ الاعتقال، تاريخ إرسال الإضبارة، تاريخ عودة الإضبارة، تاريخ الإفراج، تاريخ الميلاد، تاريخ الوفاة، الجرم، مقترح العميد رئيس الفرع، وقرار اللواء.
+                
+في هذا التقرير، يبدأ التحليل من بيانات مكان ولادة المعتقلين، مرورًا بالدوريات التي نفذت عمليات الاعتقال و الفروع الأمنية التي جرى تسليم المعتقلين إليها. كما يتناول انواع المحققين والاقسام واللجان الفاعلة و يستعرض التقرير أيضا طبيعة التهم الموجّهة للمتقلين وما انتهت إليه قضاياهم، ويُختتم بعرض بياني يوضح التوزع الزمني لعدد المعتقلين خلال تلك السنوات ومقتطفات من السجل.
+
+</div>
+""", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+
+# --- Start of New Section ---
+
+#st.markdown("<hr>", unsafe_allow_html=True) # Adds a horizontal line for separation
+
+# Create a new row of columns with the same ratio
 col5, col6, col7, col8 = st.columns([1, 4, 1, 4])
 
 # Add content to the new columns
@@ -453,7 +451,6 @@ with col23:
 """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-
 
 
 

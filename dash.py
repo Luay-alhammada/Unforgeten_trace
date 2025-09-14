@@ -427,6 +427,13 @@ with col23:
 </p>
 """, unsafe_allow_html=True)
 
+st.divider()
+st.markdown("""
+<div class='metadata-card'>
+    <h5>• <b>تحليل وإعداد:</b> Luay Alhammada</h5>
+    <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
+</div>
+""", unsafe_allow_html=True)
 
 
 

@@ -339,6 +339,7 @@ with col15:
 
 
 with col17:
+    # Explanatory paragraph BEFORE the chart
     col17.markdown("""
     <p><strong>دور الرعاية:</strong></p>
     <p>
@@ -348,7 +349,8 @@ with col17:
     </p>
     <br>
     """, unsafe_allow_html=True)
-    
+
+    # Chart
     bar_counts = df_filtered['احالات'].value_counts().head(20).sort_values()
     labels = [get_display(arabic_reshaper.reshape(f"{cat}")) for cat in bar_counts.index]
     
@@ -358,7 +360,7 @@ with col17:
     for bar in bars:
         width = bar.get_width()
         label_x_pos = width + 7
-        ax.text(label_x_pos, bar.get_y() + bar.get_height()/2, f'{int(width)}', 
+        ax.text(label_x_pos, bar.get_y() + bar.get_height()/2, f'{int(width)}',
                 va='center', ha='left', fontsize=16, fontfamily='Tajawal')
 
     ax.tick_params(axis='y', labelsize=18, labelcolor='#555')
@@ -369,6 +371,12 @@ with col17:
     plt.tight_layout()
     
     col17.pyplot(fig)
+
+    # Custom header AFTER the chart
+    col17.markdown(
+        '<h2 style="font-size:32px; font-family:Tajawal;">المرشحات</h2>',
+        unsafe_allow_html=True
+    )
 
 col18, col19, col20, col21 = st.columns([1, 4, 1, 4])
 
@@ -431,6 +439,7 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 

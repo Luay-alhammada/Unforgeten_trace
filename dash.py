@@ -102,7 +102,7 @@ st.divider()
 col1, col2, col4, col3 = st.columns([1, 4, 1, 4])
 
 
-with col9:
+with col1:
     st.header("المرشحات")
     years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
     years_with_all = ['جميع السنوات'] + years
@@ -430,6 +430,7 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 

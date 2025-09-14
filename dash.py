@@ -75,6 +75,7 @@ def load_data(url):
 df = load_data(url)
 df['date_in'] = pd.to_datetime(df['date_in'], errors='coerce')
 
+
 # -------------------------------
 # Page Title (Improved)
 # -------------------------------
@@ -332,12 +333,6 @@ with col15:
 جواب مدير الإدارة: يحال إلى محكمة الميدان بغض النظر عن سنه.
 </p>
 <br>
-<p><strong>دور الرعاية:</strong></p>
-<p>أُحيل نحو 23 طفلًا إلى دور الرعاية، حيث وردت مصطلحات مختلفة لذلك، مثل "ميتم"، "دار رعاية"، "ملجأ"، أو "الرعاية الاجتماعية". وكانت معظم هذه الإحالات تتم عن طريق المحافظ.
-<br>أسماء دور الرعاية التي وردت في البيانات:
-<br>قرى الأطفال SOS, مركز إيواء ضاحية قدسيا - جمعية المبرة.
-</p>
-<br>
 <p><strong>التحفظ للمبادلة:</strong></p>
 <p>كشفت العديد من السجلات عن التحفظ على الأطفال صراحةً، إما للضغط على ذويهم لتسليم أنفسهم أو لاستخدامهم في مفاوضات التبادل. أظهرت السجلات أيضًا وفاة عدد من الأطفال، وأيضا إلى إجراء مقابلات مع صحف وتلفزيونات محلية وعربية ودولية لتعزيز بروباغندا النظام.
 <br>
@@ -350,8 +345,7 @@ with col15:
 
 
 with col17:
-    st.markdown("<h4>6 - مقترحات الإحالة من رئيس الفرع لمدير الإدارة</h4>", unsafe_allow_html=True)
-    
+    # Chart code
     bar_counts = df_filtered['احالات'].value_counts().head(20).sort_values()
     labels = [get_display(arabic_reshaper.reshape(f"{cat}")) for cat in bar_counts.index]
     
@@ -361,7 +355,8 @@ with col17:
     for bar in bars:
         width = bar.get_width()
         label_x_pos = width + 7
-        ax.text(label_x_pos, bar.get_y() + bar.get_height()/2, f'{int(width)}', va='center', ha='left', fontsize=16, fontfamily='Tajawal')
+        ax.text(label_x_pos, bar.get_y() + bar.get_height()/2, f'{int(width)}', 
+                va='center', ha='left', fontsize=16, fontfamily='Tajawal')
 
     ax.tick_params(axis='y', labelsize=18, labelcolor='#555')
     ax.set_xlabel('')
@@ -370,6 +365,18 @@ with col17:
     plt.grid(axis='x', color='lightgray', linestyle='--', linewidth=0.5, alpha=0.7)
     plt.tight_layout()
     st.pyplot(fig)
+
+    # Paragraph under chart
+    col17.markdown("""
+    <p><strong>دور الرعاية:</strong></p>
+    <p>
+    أُحيل نحو 23 طفلًا إلى دور الرعاية، حيث وردت مصطلحات مختلفة لذلك، مثل "ميتم"، "دار رعاية"، "ملجأ"، أو "الرعاية الاجتماعية". وكانت معظم هذه الإحالات تتم عن طريق المحافظ.
+    <br>أسماء دور الرعاية التي وردت في البيانات:
+    <br>قرى الأطفال SOS, مركز إيواء ضاحية قدسيا - جمعية المبرة.
+    </p>
+    <br>
+    """, unsafe_allow_html=True)
+
 
 
 col18, col19, col20, col21 = st.columns([1, 4, 1, 4])
@@ -432,6 +439,7 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 

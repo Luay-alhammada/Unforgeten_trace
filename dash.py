@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import arabic_reshaper
 from bidi.algorithm import get_display
+from sklearn.preprocessing import MinMaxScaler
+import pydeck as pdk
 
 st.set_page_config(
     page_title="Unforgeten trace",       
@@ -70,10 +72,14 @@ url = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/main/un
 
 @st.cache_data
 def load_data(url):
-    return pd.read_csv(url)
+    df = pd.read_csv(url)
+    return df
 
 df = load_data(url)
 df['date_in'] = pd.to_datetime(df['date_in'], errors='coerce')
+
+# Show columns to help debug missing lat/lon
+st.write("🔍 Dataset columns:", df.columns.tolist())
 
 # -------------------------------
 # Page Title (Improved)
@@ -105,10 +111,10 @@ col1, col2, col4, col3 = st.columns([1, 4, 1, 4])
 # Left Column: Filters
 # -------------------------------
 with col1:
-    st.header("Filters")
+    st.header("الفلاتر")
     years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
     years_with_all = ['All Years'] + years
-    selected_year = st.selectbox("Select Year", years_with_all)
+    selected_year = st.selectbox("اختر السنة", years_with_all)
 
 # Filter the DataFrame based on the selection
 if selected_year == "All Years":
@@ -116,52 +122,73 @@ if selected_year == "All Years":
 else:
     df_filtered = df[df['date_in'].dt.year == selected_year]
 
-
 # -------------------------------
 # Middle Column: Map
 # -------------------------------
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
-import pydeck as pdk
+# First, check for latitude/longitude column names
+lat_col = None
+lon_col = None
 
+# Common possibilities for your dataset
+possible_lat_cols = ['lat', 'latitude', 'Lat', 'Latitude', 'LAT', ' LAT']
+possible_lon_cols = ['lon', 'longitude', 'Lon', 'Longitude', 'LON', ' LON']
 
-df_filtered["lat"] = pd.to_numeric(df_filtered["lat"], errors="coerce")
-df_filtered["lon"] = pd.to_numeric(df_filtered["lon"], errors="coerce")
+for c in df_filtered.columns:
+    if c in possible_lat_cols:
+        lat_col = c
+    if c in possible_lon_cols:
+        lon_col = c
 
-# Aggregate counts per birthplace for the filtered data
-df_counts = df_filtered.groupby("مكان الولادة").size().reset_index(name="count")
-df_coords = df_filtered.groupby("مكان الولادة")[["lat", "lon"]].first().reset_index()
-df_map = df_counts.merge(df_coords, on="مكان الولادة", how="left")
-df_map = df_map.dropna(subset=["lat", "lon"])
+if lat_col is None or lon_col is None:
+    st.error(f"❌ لا يوجد أعمدة للموقع (latitude/longitude) في البيانات. الأعمدة الموجودة: {df_filtered.columns.tolist()}")
+else:
+    # Work on a copy to avoid warnings
+    df_map_src = df_filtered.copy()
+    df_map_src[lat_col] = pd.to_numeric(df_map_src[lat_col], errors='coerce')
+    df_map_src[lon_col] = pd.to_numeric(df_map_src[lon_col], errors='coerce')
 
-# Scale radius
-scaler = MinMaxScaler((5, 20))
-df_map["radius"] = scaler.fit_transform(df_map[["count"]])
+    # Aggregate counts per birthplace for filtered data
+    if "مكان الولادة" not in df_map_src.columns:
+        st.error("❌ العمود 'مكان الولادة' غير موجود في البيانات.")
+    else:
+        df_counts = df_map_src.groupby("مكان الولادة").size().reset_index(name="count")
+        df_coords = df_map_src.groupby("مكان الولادة")[[lat_col, lon_col]].first().reset_index()
+        df_map = df_counts.merge(df_coords, on="مكان الولادة", how="left")
+        df_map = df_map.dropna(subset=[lat_col, lon_col])
 
-# PyDeck layer
-layer = pdk.Layer(
-    "ScatterplotLayer",
-    data=df_map,
-    get_position=["lon", "lat"],
-    get_radius="radius",
-    get_fill_color=[200, 30, 0, 160],
-    pickable=True,
-    radius_units="pixels",
-)
+        if df_map.empty:
+            st.warning("⚠️ لا توجد بيانات لعرضها على الخريطة مع هذه السنة.")
+        else:
+            # Scale radius
+            scaler = MinMaxScaler((5, 20))
+            df_map["radius"] = scaler.fit_transform(df_map[["count"]])
 
-view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6)
+            # PyDeck layer
+            layer = pdk.Layer(
+                "ScatterplotLayer",
+                data=df_map,
+                get_position=[lon_col, lat_col],
+                get_radius="radius",
+                get_fill_color=[200, 30, 0, 160],
+                pickable=True,
+                radius_units="pixels",
+            )
 
-r = pdk.Deck(
-    layers=[layer],
-    initial_view_state=view_state,
-    tooltip={
-        "html": "<b>Birthplace:</b> {مكان الولادة}<br/><b>Cases:</b> {count}",
-        "style": {"backgroundColor": "steelblue", "color": "white"}
-    },
-    map_style="light"
-)
+            # Center view — adjust lat/lon to your region
+            view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6)
 
-st.pydeck_chart(r)
+            deck = pdk.Deck(
+                layers=[layer],
+                initial_view_state=view_state,
+                tooltip={
+                    "html": "<b>مكان الولادة:</b> {مكان الولادة}<br/><b>عدد السجلات:</b> {count}",
+                    "style": {"backgroundColor": "steelblue", "color": "white"}
+                },
+                map_style="light"
+            )
+
+            st.pydeck_chart(deck)
+
 
 
 # -------------------------------
@@ -433,6 +460,7 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 

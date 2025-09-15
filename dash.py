@@ -78,26 +78,38 @@ df['date_in'] = pd.to_datetime(df['date_in'], errors='coerce')
 # -------------------------------
 # Page Title (Improved)
 # -------------------------------
+# st.markdown("""
+#     <div class='custom-title'>
+#         <h2>الأطفال في سجلات فرع تحقيق المخابرات الجوية</h2>
+#     </div>
+# """, unsafe_allow_html=True)
+
+# st.divider()
+
+# # -------------------------------
+# # Metadata Card
+# # -------------------------------
+# st.markdown("""
+#     <div class='metadata-card'>
+#         <h4>• <b>الموضوع:</b> الانتهاكات بحق الأطفال (دون سن الـ 18)</h4>
+#         <h4>• <b>الفترة الزمنية:</b> 2011 حتى 2016</h4>
+#         <h4>• <b>العدد الإجمالي:</b> 1600 سجل</h4>
+#     </div>
+# """, unsafe_allow_html=True)
+
+# st.divider()
+st.markdown("<h4 style='text-align: center; direction: rtl;'>الأطفال في سجلات فرع تحقيق المخابرات الجوية</h4>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+
 st.markdown("""
-    <div class='custom-title'>
-        <h2>الأطفال في سجلات فرع تحقيق المخابرات الجوية</h2>
-    </div>
+<div style='text-align: right; direction: rtl;'>
+<h4 style='text-align: right;'>• <b>الموضوع:</b> الانتهاكات بحق الأطفال (دون سن الـ 18)</h4>
+<h4 style='text-align: right;'>• <b>الفترة الزمنية:</b> 2011 حتى 2016</h4>
+<h4 style='text-align: right;'>• <b>العدد الإجمالي:</b> 1600 سجل</h4>
+</div>
 """, unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
-st.divider()
-
-# -------------------------------
-# Metadata Card
-# -------------------------------
-st.markdown("""
-    <div class='metadata-card'>
-        <h4>• <b>الموضوع:</b> الانتهاكات بحق الأطفال (دون سن الـ 18)</h4>
-        <h4>• <b>الفترة الزمنية:</b> 2011 حتى 2016</h4>
-        <h4>• <b>العدد الإجمالي:</b> 1600 سجل</h4>
-    </div>
-""", unsafe_allow_html=True)
-
-st.divider()
 
 col1, col2, col4, col3 = st.columns([1, 4, 1, 4])
 
@@ -432,5 +444,6 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 

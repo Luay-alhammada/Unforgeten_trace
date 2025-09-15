@@ -105,15 +105,17 @@ col1, col2, col4, col3 = st.columns([1, 4, 1, 4])
 # Left Column: Filters
 # -------------------------------
 with col1:
-    st.header("المرشحات")
+    st.header("Filters")
     years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
-    years_with_all = ['جميع السنوات'] + years
-    selected_year = st.selectbox("اختر السنة", years_with_all)
+    years_with_all = ['All Years'] + years
+    selected_year = st.selectbox("Select Year", years_with_all)
 
-if selected_year == "جميع السنوات":
+# Filter the DataFrame based on the selection
+if selected_year == "All Years":
     df_filtered = df.copy()
 else:
     df_filtered = df[df['date_in'].dt.year == selected_year]
+
 
 # -------------------------------
 # Middle Column: Map
@@ -219,7 +221,7 @@ with col8:
         legend_labels,
         loc="center left",
         bbox_to_anchor=(1.1, 0.5),
-        fontsize=8,
+        fontsize=6,
         frameon=False,
         prop={'family': 'Tajawal'}
     )
@@ -432,4 +434,5 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 

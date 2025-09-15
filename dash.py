@@ -362,7 +362,7 @@ share_url = "https://unforgetentrace-lvsebpbxlivulgb37f92nc.streamlit.app/"  # �
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("""
 <div style="text-align:center;">
-    <p style="font-size:16px; font-weight:bold;"> شارك التقرير:</p>
+    <p style="font-size:16px; font-weight:bold;"> لمشاركة التقرير:</p>
     <a href="https://www.facebook.com/sharer/sharer.php?u={0}" target="_blank">
         <img src="https://www.svgrepo.com/show/452196/facebook-1.svg" width="40" style="margin:10px;">
     </a>
@@ -386,6 +386,7 @@ st.markdown("""
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>إعداد:</b> لؤي الحمادة</p>
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>للتواصل:</b> alhammada.luay@gmail.com</p>
 """, unsafe_allow_html=True)
+
 
 
 

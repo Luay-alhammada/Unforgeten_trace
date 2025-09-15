@@ -128,42 +128,41 @@ import pydeck as pdk
 df_filtered["lat"] = pd.to_numeric(df_filtered["lat"], errors="coerce")
 df_filtered["lon"] = pd.to_numeric(df_filtered["lon"], errors="coerce")
 
-    # Aggregate counts per birthplace for filtered data
 # Aggregate counts per birthplace for the filtered data
 df_counts = df_filtered.groupby("مكان الولادة").size().reset_index(name="count")
 df_coords = df_filtered.groupby("مكان الولادة")[["lat", "lon"]].first().reset_index()
 df_map = df_counts.merge(df_coords, on="مكان الولادة", how="left")
 df_map = df_map.dropna(subset=["lat", "lon"])
 
+# Scale radius
+scaler = MinMaxScaler((5, 20))
+df_map["radius"] = scaler.fit_transform(df_map[["count"]])
 
-    # Scale radius
-    scaler = MinMaxScaler((5, 20))
-    df_map["radius"] = scaler.fit_transform(df_map[["count"]])
+# PyDeck layer
+layer = pdk.Layer(
+    "ScatterplotLayer",
+    data=df_map,
+    get_position=["lon", "lat"],
+    get_radius="radius",
+    get_fill_color=[200, 30, 0, 160],
+    pickable=True,
+    radius_units="pixels",
+)
 
-    # PyDeck layer
-    layer = pdk.Layer(
-        "ScatterplotLayer",
-        data=df_map,
-        get_position=["lon", "lat"],
-        get_radius="radius",
-        get_fill_color=[200, 30, 0, 160],
-        pickable=True,
-        radius_units="pixels",
-    )
+view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6)
 
-    view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6)
+r = pdk.Deck(
+    layers=[layer],
+    initial_view_state=view_state,
+    tooltip={
+        "html": "<b>Birthplace:</b> {مكان الولادة}<br/><b>Cases:</b> {count}",
+        "style": {"backgroundColor": "steelblue", "color": "white"}
+    },
+    map_style="light"
+)
 
-    r = pdk.Deck(
-        layers=[layer],
-        initial_view_state=view_state,
-        tooltip={
-            "html": "<b>Birthplace:</b> {مكان الولادة}<br/><b>Cases:</b> {count}",
-            "style": {"backgroundColor": "steelblue", "color": "white"}
-        },
-        map_style="light"
-    )
+st.pydeck_chart(r)
 
-    st.pydeck_chart(r)
 
 # -------------------------------
 # Right Column: Introduction
@@ -434,6 +433,7 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 

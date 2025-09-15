@@ -124,12 +124,9 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import pydeck as pdk
 
-url2 = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/main/%D9%85%D9%83%D8%A7%D9%86_%D8%A7%D9%84%D9%88%D9%84%D8%A7%D8%AF%D8%A9.csv"
 
-df_birthplace = load_data(url2)
-
-df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
-df["lon"] = pd.to_numeric(df["lon"], errors="coerce")
+df_filtered["lat"] = pd.to_numeric(df_filtered["lat"], errors="coerce")
+df_filtered["lon"] = pd.to_numeric(df_filtered["lon"], errors="coerce")
 
     # Aggregate counts per birthplace for filtered data
 # Aggregate counts per birthplace for the filtered data
@@ -437,6 +434,7 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 

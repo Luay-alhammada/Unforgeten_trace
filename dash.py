@@ -122,60 +122,67 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import pydeck as pdk
 
-# Ensure 'lat' and 'lon' columns in the original df_filtered are numeric.
-# This should be done before grouping to avoid errors.
-df_filtered["lat"] = pd.to_numeric(df_filtered["lat"], errors="coerce")
-df_filtered["lon"] = pd.to_numeric(df_filtered["lon"], errors="coerce")
+# Check for the existence of 'lat' and 'lon' columns in the filtered DataFrame.
+# This prevents the KeyError if the filtering removes all rows with lat/lon data.
+if 'lat' in df_filtered.columns and 'lon' in df_filtered.columns:
+    # Convert 'lat' and 'lon' to numeric, handling any non-numeric values
+    df_filtered["lat"] = pd.to_numeric(df_filtered["lat"], errors="coerce")
+    df_filtered["lon"] = pd.to_numeric(df_filtered["lon"], errors="coerce")
 
-# Create the df_birthplace DataFrame by grouping and counting
-df_birthplace = df_filtered.groupby(['مكان الولادة', 'lat', 'lon']).size().reset_index(name='count')
+    # Drop any rows where 'lat' or 'lon' became NaN after coercion
+    df_filtered_cleaned = df_filtered.dropna(subset=['lat', 'lon'])
 
-# Apply the scaler to the 'count' column of the aggregated df_birthplace dataframe
-scaler = MinMaxScaler((5, 20))
-df_birthplace["radius"] = scaler.fit_transform(df_birthplace[["count"]])
+    # Check if there's any data left to plot
+    if not df_filtered_cleaned.empty:
+        # Create the df_birthplace DataFrame by grouping and counting valid locations
+        df_birthplace = df_filtered_cleaned.groupby(['مكان الولادة', 'lat', 'lon']).size().reset_index(name='count')
 
-# The Pydeck layer should use the df_birthplace dataframe, which contains
-# the count and radius information for each unique location.
-layer = pdk.Layer(
-    "ScatterplotLayer",
-    data=df_birthplace,  # Correct dataframe to use
-    get_position=["lon", "lat"],
-    get_radius="radius",
-    get_fill_color=[200, 30, 0, 160],
-    pickable=True,
-    radius_units="pixels",
-)
+        # Apply the scaler to the 'count' column of the aggregated df_birthplace dataframe
+        scaler = MinMaxScaler((5, 20))
+        df_birthplace["radius"] = scaler.fit_transform(df_birthplace[["count"]])
 
-view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6)
+        # The Pydeck layer should use the df_birthplace dataframe, which contains
+        # the count and radius information for each unique location.
+        layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=df_birthplace,  # Correct dataframe to use
+            get_position=["lon", "lat"],
+            get_radius="radius",
+            get_fill_color=[200, 30, 0, 160],
+            pickable=True,
+            radius_units="pixels",
+        )
 
-r = pdk.Deck(
-    layers=[layer],
-    initial_view_state=view_state,
-    tooltip={
-        "html": "<b>مكان الولادة:</b> {مكان الولادة}<br/><b>الحالات:</b> {count}",
-        "style": {"backgroundColor": "steelblue", "color": "white"}
-    },
-    map_style="light"
-)
+        view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6)
 
-# Place the chart within the correct column
-with col2:
-    st.markdown("<h4>1 - أماكن تولد المعتقلين</h4>", unsafe_allow_html=True)
-    st.markdown("""
-    <p>
-    حوالي 40% من الأسماء تم ذكر أماكن تولدهم
-    </p>
-    """, unsafe_allow_html=True)
-    st.pydeck_chart(r)
+        r = pdk.Deck(
+            layers=[layer],
+            initial_view_state=view_state,
+            tooltip={
+                "html": "<b>مكان الولادة:</b> {مكان الولادة}<br/><b>الحالات:</b> {count}",
+                "style": {"backgroundColor": "steelblue", "color": "white"}
+            },
+            map_style="light"
+        )
+        
+        # Display the map if data is available
+        with col2:
+            st.markdown("<h4>1 - أماكن تولد المعتقلين</h4>", unsafe_allow_html=True)
+            st.markdown("""
+            <p>
+            حوالي 40% من الأسماء تم ذكر أماكن تولدهم
+            </p>
+            """, unsafe_allow_html=True)
+            st.pydeck_chart(r)
 
-with col2:
-    st.markdown("<h4>1 - أماكن تولد المعتقلين</h4>", unsafe_allow_html=True)
-    st.markdown("""
-    <p>
-    حوالي 40% من الأسماء تم ذكر أماكن تولدهم
-    </p>
-    """, unsafe_allow_html=True)
-    st.pydeck_chart(r)
+    else:
+        # Display a message if no data is available for the selected year
+        with col2:
+            st.info("لا توجد بيانات متاحة للمواقع الجغرافية لهذه السنة.")
+else:
+    # Display a message if the columns are missing from the filtered DataFrame
+    with col2:
+        st.error("أعمدة 'lat' أو 'lon' غير موجودة في البيانات المصفاة.")
 
 # -------------------------------
 # Right Column: Introduction
@@ -446,5 +453,6 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 

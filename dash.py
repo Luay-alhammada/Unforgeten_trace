@@ -3,36 +3,46 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import arabic_reshaper
 from bidi.algorithm import get_display
-from sklearn.preprocessing import MinMaxScaler
-import pydeck as pdk
 
-# -------------------------------
-# Page configuration
-# -------------------------------
 st.set_page_config(
-    page_title="Unforgeten trace",
-    page_icon="📊",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    page_title="Unforgeten trace",       
+    page_icon="📊",              
+    layout="wide",               
+    initial_sidebar_state="expanded"  
 )
 
 # -------------------------------
-# Custom CSS
+# Custom CSS for unified styling
 # -------------------------------
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
-
+    
     body, h1, h2, h3, h4, h5, h6, p, li, div {
         font-family: 'Tajawal', sans-serif !important;
         direction: rtl;
         text-align: right;
     }
-    h2 { font-size: 2.2rem; font-weight: 700; color: #2c3e50; }
-    h3 { font-size: 1.8rem; font-weight: 700; color: #34495e; }
-    h4 { font-size: 1.5rem; font-weight: 700; color: #34495e; }
-    h5 { font-size: 1.25rem; font-weight: 700; color: #34495e; }
-
+    h2 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+    h3 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #34495e;
+    }
+    h4 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #34495e;
+    }
+    h5 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #34495e;
+    }
     .custom-title {
         text-align: center;
         background-color: #f8f9fa;
@@ -46,8 +56,12 @@ st.markdown("""
         border-radius: 12px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
+    .st-emotion-cache-v63k21 {
+        padding: 10px;
+    }
 </style>
 """, unsafe_allow_html=True)
+
 
 # -------------------------------
 # Load Data
@@ -56,19 +70,18 @@ url = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/main/un
 
 @st.cache_data
 def load_data(url):
-    df = pd.read_csv(url)
-    df['date_in'] = pd.to_datetime(df['date_in'], errors='coerce')
-    return df
+    return pd.read_csv(url)
 
 df = load_data(url)
+df['date_in'] = pd.to_datetime(df['date_in'], errors='coerce')
 
 # -------------------------------
-# Page Title
+# Page Title (Improved)
 # -------------------------------
 st.markdown("""
-<div class='custom-title'>
-    <h2>الأطفال في سجلات فرع تحقيق المخابرات الجوية</h2>
-</div>
+    <div class='custom-title'>
+        <h2>الأطفال في سجلات فرع تحقيق المخابرات الجوية</h2>
+    </div>
 """, unsafe_allow_html=True)
 
 st.divider()
@@ -76,19 +89,16 @@ st.divider()
 # -------------------------------
 # Metadata Card
 # -------------------------------
-st.markdown(f"""
-<div class='metadata-card'>
-    <h4>• <b>الموضوع:</b> الانتهاكات بحق الأطفال (دون سن الـ 18)</h4>
-    <h4>• <b>الفترة الزمنية:</b> {df['date_in'].dt.year.min()} حتى {df['date_in'].dt.year.max()}</h4>
-    <h4>• <b>العدد الإجمالي:</b> {len(df)} سجل</h4>
-</div>
+st.markdown("""
+    <div class='metadata-card'>
+        <h4>• <b>الموضوع:</b> الانتهاكات بحق الأطفال (دون سن الـ 18)</h4>
+        <h4>• <b>الفترة الزمنية:</b> 2011 حتى 2016</h4>
+        <h4>• <b>العدد الإجمالي:</b> 1600 سجل</h4>
+    </div>
 """, unsafe_allow_html=True)
 
 st.divider()
 
-# -------------------------------
-# Layout Columns
-# -------------------------------
 col1, col2, col4, col3 = st.columns([1, 4, 1, 4])
 
 # -------------------------------
@@ -106,46 +116,53 @@ else:
     df_filtered = df[df['date_in'].dt.year == selected_year]
 
 # -------------------------------
-# Ensure 'lat' and 'lon' exist
+# Middle Column: Map
 # -------------------------------
-for col in ['lat', 'lon']:
-    if col not in df_filtered.columns:
-        df_filtered[col] = None  # fill missing with None
-    df_filtered[col] = pd.to_numeric(df_filtered[col], errors='coerce')
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+import pydeck as pdk
 
-# -------------------------------
-# Map Visualization
-# -------------------------------
-if df_filtered[['lat','lon']].notnull().any().any():
-    st.subheader("خريطة المواقع")
-    midpoint = (df_filtered['lat'].mean(), df_filtered['lon'].mean())
-    st.pydeck_chart(pdk.Deck(
-        map_style='mapbox://styles/mapbox/light-v10',
-        initial_view_state=pdk.ViewState(
-            latitude=midpoint[0] if not pd.isna(midpoint[0]) else 33.5,
-            longitude=midpoint[1] if not pd.isna(midpoint[1]) else 36.3,
-            zoom=6,
-            pitch=0,
-        ),
-        layers=[
-            pdk.Layer(
-                'ScatterplotLayer',
-                data=df_filtered,
-                get_position='[lon, lat]',
-                get_color='[255, 0, 0, 160]',
-                get_radius=2000,
-                pickable=True,
-            )
-        ],
-    ))
-else:
-    st.warning("لا توجد بيانات إحداثيات للعرض على الخريطة.")
+url2 = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/main/%D9%85%D9%83%D8%A7%D9%86_%D8%A7%D9%84%D9%88%D9%84%D8%A7%D8%AF%D8%A9.csv"
 
-# -------------------------------
-# Data Table Preview
-# -------------------------------
-st.subheader("عرض البيانات")
-st.dataframe(df_filtered)
+df_birthplace = load_data(url2)
+
+df_birthplace["lat"] = pd.to_numeric(df_birthplace["lat"], errors="coerce")
+df_birthplace["lon"] = pd.to_numeric(df_birthplace["lon"], errors="coerce")
+
+scaler = MinMaxScaler((5, 20))
+df_birthplace["radius"] = scaler.fit_transform(df_birthplace[["count"]])
+
+layer = pdk.Layer(
+    "ScatterplotLayer",
+    data=df_birthplace,
+    get_position=["lon", "lat"],
+    get_radius="radius",
+    get_fill_color=[200, 30, 0, 160],
+    pickable=True,
+    radius_units="pixels",
+)
+
+view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6)
+
+r = pdk.Deck(
+    layers=[layer],
+    initial_view_state=view_state,
+    tooltip={
+        "html": "<b>مكان الولادة:</b> {مكان الولادة}<br/><b>الحالات:</b> {count}",
+        "style": {"backgroundColor": "steelblue", "color": "white"}
+    },
+    map_style="light"
+)
+
+with col2:
+    st.markdown("<h4>1 - أماكن تولد المعتقلين</h4>", unsafe_allow_html=True)
+    st.markdown("""
+    <p>
+    حوالي 40% من الأسماء تم ذكر أماكن تولدهم
+    </p>
+    """, unsafe_allow_html=True)
+    st.pydeck_chart(r)
+
 # -------------------------------
 # Right Column: Introduction
 # -------------------------------
@@ -415,7 +432,4 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
-
-
-
 

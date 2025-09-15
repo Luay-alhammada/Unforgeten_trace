@@ -3,6 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import arabic_reshaper
 from bidi.algorithm import get_display
+import streamlit as st
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+import pydeck as pdk
 
 st.set_page_config(
     page_title="Unforgeten trace",       
@@ -118,67 +122,65 @@ else:
 # -------------------------------
 # Middle Column: Map
 # -------------------------------
-# -------------------------------
-# Middle Column: Map (Corrected)
-# -------------------------------
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
-import pydeck as pdk
 
-# Convert lat/lon columns to numeric and drop rows with missing values
-# This needs to be done on the filtered data before any aggregation.
-df_filtered['lat'] = pd.to_numeric(df_filtered['lat'], errors='coerce')
-df_filtered['lon'] = pd.to_numeric(df_filtered['lon'], errors='coerce')
-df_filtered = df_filtered.dropna(subset=['lat', 'lon', 'مكان الولادة'])
-
-# Check if there is any data to plot after cleaning
-if not df_filtered.empty:
-    # Aggregate data correctly to get counts per location
-    df_counts = df_filtered.groupby("مكان الولادة").size().reset_index(name="count")
-    df_coords = df_filtered.groupby("مكان الولادة")[["lat", "lon"]].first().reset_index()
-    
-    # Merge the aggregated data into a single DataFrame for the map
-    df_map = df_counts.merge(df_coords, on="مكان الولادة", how="left")
-
-    # Calculate radius based on the 'count' column in the aggregated DataFrame
-    scaler = MinMaxScaler((5, 20))
-    df_map["radius"] = scaler.fit_transform(df_map[["count"]])
-
-    # Use the correctly prepared DataFrame for the Pydeck Layer
-    layer = pdk.Layer(
-        "ScatterplotLayer",
-        data=df_map, # Correct DataFrame is df_map
-        get_position=["lon", "lat"],
-        get_radius="radius",
-        get_fill_color=[200, 30, 0, 160],
-        pickable=True,
-        radius_units="pixels",
-    )
-
-    view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6)
-
-    r = pdk.Deck(
-        layers=[layer],
-        initial_view_state=view_state,
-        tooltip={
-            "html": "<b>مكان الولادة:</b> {مكان الولادة}<br/><b>الحالات:</b> {count}",
-            "style": {"backgroundColor": "steelblue", "color": "white"}
-        },
-        map_style="light"
-    )
-
-    with col2:
-        st.markdown("<h4>1 - أماكن تولد المعتقلين</h4>", unsafe_allow_html=True)
-        st.markdown("""
-        <p>
-        حوالي 40% من الأسماء تم ذكر أماكن تولدهم
-        </p>
-        """, unsafe_allow_html=True)
-        st.pydeck_chart(r)
-
-else:
+# CHECK FOR EMPTY DATAFRAME BEFORE PROCEEDING
+if df_filtered.empty:
     with col2:
         st.info("لا توجد بيانات متاحة للمواقع الجغرافية لهذه السنة.")
+else:
+    # If the DataFrame is not empty, proceed with data cleaning and plotting
+    
+    # Convert lat/lon columns to numeric and drop rows with missing values
+    df_filtered['lat'] = pd.to_numeric(df_filtered['lat'], errors='coerce')
+    df_filtered['lon'] = pd.to_numeric(df_filtered['lon'], errors='coerce')
+    df_filtered = df_filtered.dropna(subset=['lat', 'lon', 'مكان الولادة'])
+
+    if not df_filtered.empty:
+        # Aggregate data correctly to get counts per location
+        df_counts = df_filtered.groupby("مكان الولادة").size().reset_index(name="count")
+        df_coords = df_filtered.groupby("مكان الولادة")[["lat", "lon"]].first().reset_index()
+        
+        # Merge the aggregated data into a single DataFrame for the map
+        df_map = df_counts.merge(df_coords, on="مكان الولادة", how="left")
+
+        # Calculate radius based on the 'count' column in the aggregated DataFrame
+        scaler = MinMaxScaler((5, 20))
+        df_map["radius"] = scaler.fit_transform(df_map[["count"]])
+
+        # Use the correctly prepared DataFrame for the Pydeck Layer
+        layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=df_map, 
+            get_position=["lon", "lat"],
+            get_radius="radius",
+            get_fill_color=[200, 30, 0, 160],
+            pickable=True,
+            radius_units="pixels",
+        )
+
+        view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6)
+
+        r = pdk.Deck(
+            layers=[layer],
+            initial_view_state=view_state,
+            tooltip={
+                "html": "<b>مكان الولادة:</b> {مكان الولادة}<br/><b>الحالات:</b> {count}",
+                "style": {"backgroundColor": "steelblue", "color": "white"}
+            },
+            map_style="light"
+        )
+        
+        with col2:
+            st.markdown("<h4>1 - أماكن تولد المعتقلين</h4>", unsafe_allow_html=True)
+            st.markdown("""
+            <p>
+            حوالي 40% من الأسماء تم ذكر أماكن تولدهم
+            </p>
+            """, unsafe_allow_html=True)
+            st.pydeck_chart(r)
+    else:
+        with col2:
+            st.info("لا توجد بيانات متاحة للمواقع الجغرافية لهذه السنة.")
 # -------------------------------
 # Right Column: Introduction
 # -------------------------------
@@ -448,5 +450,6 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 

@@ -295,7 +295,16 @@ with col17:
     plt.grid(axis='x', color='lightgray', linestyle='--', linewidth=0.5, alpha=0.7)
     plt.tight_layout()
     st.pyplot(fig)
-
+    # Paragraph under chart
+    col17.markdown("""
+    <p><strong>دور الرعاية:</strong></p>
+    <p>
+    أُحيل نحو 23 طفلًا إلى دور الرعاية، حيث وردت مصطلحات مختلفة لذلك، مثل "ميتم"، "دار رعاية"، "ملجأ"، أو "الرعاية الاجتماعية". وكانت معظم هذه الإحالات تتم عن طريق المحافظ.
+    <br>أسماء دور الرعاية التي وردت في البيانات:
+    <br>قرى الأطفال SOS, مركز إيواء ضاحية قدسيا - جمعية المبرة.
+    </p>
+    <br>
+    """, unsafe_allow_html=True)
 # -------------------------------
 # Section 8 & 9: Yearly Distribution & Record Excerpts
 # -------------------------------
@@ -360,3 +369,4 @@ st.markdown("""
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>إعداد:</b> لؤي الحمادة</p>
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>للتواصل:</b> alhammada.luay@gmail.com</p>
 """, unsafe_allow_html=True)
+

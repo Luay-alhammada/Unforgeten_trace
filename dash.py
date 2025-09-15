@@ -357,20 +357,21 @@ with col23:
 </div><br>
 """, unsafe_allow_html=True)
 #-----------------------------------------------
-app_url = "https://dashpy-kzz3gq4nig3bwsxbj4k2yh.streamlit.app/"  # رابط تطبيقك
+share_url = "https://unforgetentrace-lvsebpbxlivulgb37f92nc.streamlit.app/"  # 👈 ضع رابط تطبيقك بعد النشر
 
 st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown(f"""
-<div style="text-align:center; margin-top: 18px;">
-    <p style="font-size:14px; font-weight:bold; direction: rtl;"> شارك التقرير على:</p>
-    <a href="https://www.facebook.com/sharer/sharer.php?u={app_url}" target="_blank" style="margin:0 10px;">
-        <img src="https://simpleicons.org/icons/facebook.svg" width="40" alt="Facebook" />
+st.markdown("""
+<div style="text-align:center;">
+    <p style="font-size:16px; font-weight:bold;"> شارك التقرير:</p>
+    <a href="https://www.facebook.com/sharer/sharer.php?u={0}" target="_blank">
+        <img src="https://www.svgrepo.com/show/452196/facebook-1.svg" width="40" style="margin:10px;">
     </a>
-    <a href="https://www.linkedin.com/shareArticle?mini=true&url={app_url}&title=Unforgeten%20Trace%20Report&summary=تقرير%20الأطفال%20دون%2018%20سنة" target="_blank" style="margin:0 10px;">
-        <img src="https://simpleicons.org/icons/linkedin.svg" width="40" alt="LinkedIn" />
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url={0}&title=Unforgeten%20Trace%20Report&summary=Children%20in%20Airforce%20Intelligence%20Records" target="_blank">
+        <img src="https://www.svgrepo.com/show/448234/linkedin.svg" width="40" style="margin:10px;">
     </a>
 </div>
-""", unsafe_allow_html=True)
+""".format(share_url), unsafe_allow_html=True)
+
 
 
 # -------------------------------
@@ -385,6 +386,7 @@ st.markdown("""
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>إعداد:</b> لؤي الحمادة</p>
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>للتواصل:</b> alhammada.luay@gmail.com</p>
 """, unsafe_allow_html=True)
+
 
 
 

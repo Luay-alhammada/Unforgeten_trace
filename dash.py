@@ -130,10 +130,10 @@ df_filtered["lon"] = pd.to_numeric(df_filtered["lon"], errors="coerce")
 
     # Aggregate counts per birthplace for filtered data
 # Aggregate counts per birthplace for the filtered data
-    df_counts = df_filtered.groupby("مكان الولادة").size().reset_index(name="count")
-    df_coords = df_filtered.groupby("مكان الولادة")[["lat", "lon"]].first().reset_index()
-    df_map = df_counts.merge(df_coords, on="مكان الولادة", how="left")
-    df_map = df_map.dropna(subset=["lat", "lon"])
+df_counts = df_filtered.groupby("مكان الولادة").size().reset_index(name="count")
+df_coords = df_filtered.groupby("مكان الولادة")[["lat", "lon"]].first().reset_index()
+df_map = df_counts.merge(df_coords, on="مكان الولادة", how="left")
+df_map = df_map.dropna(subset=["lat", "lon"])
 
 
     # Scale radius
@@ -434,6 +434,7 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 

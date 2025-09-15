@@ -122,19 +122,23 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import pydeck as pdk
 
-url2 = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/main/%D9%85%D9%83%D8%A7%D9%86_%D8%A7%D9%84%D9%88%D9%84%D8%A7%D8%AF%D8%A9.csv"
+# Ensure 'lat' and 'lon' columns in the original df_filtered are numeric.
+# This should be done before grouping to avoid errors.
+df_filtered["lat"] = pd.to_numeric(df_filtered["lat"], errors="coerce")
+df_filtered["lon"] = pd.to_numeric(df_filtered["lon"], errors="coerce")
 
-df_birthplace = load_data(url2)
+# Create the df_birthplace DataFrame by grouping and counting
+df_birthplace = df_filtered.groupby(['مكان الولادة', 'lat', 'lon']).size().reset_index(name='count')
 
-df_birthplace["lat"] = pd.to_numeric(df_birthplace["lat"], errors="coerce")
-df_birthplace["lon"] = pd.to_numeric(df_birthplace["lon"], errors="coerce")
-
+# Apply the scaler to the 'count' column of the aggregated df_birthplace dataframe
 scaler = MinMaxScaler((5, 20))
 df_birthplace["radius"] = scaler.fit_transform(df_birthplace[["count"]])
 
+# The Pydeck layer should use the df_birthplace dataframe, which contains
+# the count and radius information for each unique location.
 layer = pdk.Layer(
     "ScatterplotLayer",
-    data=df_birthplace,
+    data=df_birthplace,  # Correct dataframe to use
     get_position=["lon", "lat"],
     get_radius="radius",
     get_fill_color=[200, 30, 0, 160],
@@ -153,6 +157,16 @@ r = pdk.Deck(
     },
     map_style="light"
 )
+
+# Place the chart within the correct column
+with col2:
+    st.markdown("<h4>1 - أماكن تولد المعتقلين</h4>", unsafe_allow_html=True)
+    st.markdown("""
+    <p>
+    حوالي 40% من الأسماء تم ذكر أماكن تولدهم
+    </p>
+    """, unsafe_allow_html=True)
+    st.pydeck_chart(r)
 
 with col2:
     st.markdown("<h4>1 - أماكن تولد المعتقلين</h4>", unsafe_allow_html=True)
@@ -432,4 +446,5 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 

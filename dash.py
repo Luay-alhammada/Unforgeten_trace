@@ -128,41 +128,44 @@ url2 = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/main/%
 
 df_birthplace = load_data(url2)
 
-df_birthplace["lat"] = pd.to_numeric(df_birthplace["lat"], errors="coerce")
-df_birthplace["lon"] = pd.to_numeric(df_birthplace["lon"], errors="coerce")
+df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
+df["lon"] = pd.to_numeric(df["lon"], errors="coerce")
 
-scaler = MinMaxScaler((5, 20))
-df_birthplace["radius"] = scaler.fit_transform(df_birthplace[["count"]])
+    # Aggregate counts per birthplace for filtered data
+# Aggregate counts per birthplace for the filtered data
+    df_counts = df_filtered.groupby("مكان الولادة").size().reset_index(name="count")
+    df_coords = df_filtered.groupby("مكان الولادة")[["lat", "lon"]].first().reset_index()
+    df_map = df_counts.merge(df_coords, on="مكان الولادة", how="left")
+    df_map = df_map.dropna(subset=["lat", "lon"])
 
-layer = pdk.Layer(
-    "ScatterplotLayer",
-    data=df_birthplace,
-    get_position=["lon", "lat"],
-    get_radius="radius",
-    get_fill_color=[200, 30, 0, 160],
-    pickable=True,
-    radius_units="pixels",
-)
 
-view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6)
+    # Scale radius
+    scaler = MinMaxScaler((5, 20))
+    df_map["radius"] = scaler.fit_transform(df_map[["count"]])
 
-r = pdk.Deck(
-    layers=[layer],
-    initial_view_state=view_state,
-    tooltip={
-        "html": "<b>مكان الولادة:</b> {مكان الولادة}<br/><b>الحالات:</b> {count}",
-        "style": {"backgroundColor": "steelblue", "color": "white"}
-    },
-    map_style="light"
-)
+    # PyDeck layer
+    layer = pdk.Layer(
+        "ScatterplotLayer",
+        data=df_map,
+        get_position=["lon", "lat"],
+        get_radius="radius",
+        get_fill_color=[200, 30, 0, 160],
+        pickable=True,
+        radius_units="pixels",
+    )
 
-with col2:
-    st.markdown("<h4>1 - أماكن تولد المعتقلين</h4>", unsafe_allow_html=True)
-    st.markdown("""
-    <p>
-    حوالي 40% من الأسماء تم ذكر أماكن تولدهم
-    </p>
-    """, unsafe_allow_html=True)
+    view_state = pdk.ViewState(latitude=34.8, longitude=38, zoom=6)
+
+    r = pdk.Deck(
+        layers=[layer],
+        initial_view_state=view_state,
+        tooltip={
+            "html": "<b>Birthplace:</b> {مكان الولادة}<br/><b>Cases:</b> {count}",
+            "style": {"backgroundColor": "steelblue", "color": "white"}
+        },
+        map_style="light"
+    )
+
     st.pydeck_chart(r)
 
 # -------------------------------
@@ -434,5 +437,6 @@ st.markdown("""
     <h5>• <b>للتواصل:</b> alhammada.luay@gmail.com</h5>
 </div>
 """, unsafe_allow_html=True)
+
 
 

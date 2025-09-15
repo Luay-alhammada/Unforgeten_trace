@@ -82,36 +82,43 @@ st.markdown("""
 st.markdown("<br>", unsafe_allow_html=True)
 
 # -------------------------------
-# Layout: Filters + Map + Text
+# Layout
 # -------------------------------
 col1, col2, col4, col3 = st.columns([1, 4, 1, 4])
 
+# -------------------------------
+# Filters
+# -------------------------------
 with col1:
     st.header("Filters")
     years = sorted(df['date_in'].dt.year.dropna().unique().astype(int), reverse=True)
     years_with_all = ['All Years'] + years
     selected_year = st.selectbox("Select Year", years_with_all)
 
+# Filter data based on selection
 if selected_year == "All Years":
     df_filtered = df.copy()
 else:
     df_filtered = df[df['date_in'].dt.year == selected_year]
 
 # -------------------------------
-# Map: Birthplaces
+# Map
 # -------------------------------
 with col2:
     st.markdown("<h4>1 - أماكن تولد المعتقلين</h4>", unsafe_allow_html=True)
     st.markdown("<div>حوالي 40% من الاسماء تم ذكر اماكن تولدهم</div><br>", unsafe_allow_html=True)
 
+    # Aggregate counts per birthplace
     df_counts = df_filtered.groupby("مكان الولادة").size().reset_index(name="count")
     df_coords = df_filtered.groupby("مكان الولادة")[["lat", "lon"]].first().reset_index()
     df_map = df_counts.merge(df_coords, on="مكان الولادة", how="left")
     df_map = df_map.dropna(subset=["lat", "lon"])
 
+    # Scale radius
     scaler = MinMaxScaler((5, 20))
     df_map["radius"] = scaler.fit_transform(df_map[["count"]])
 
+    # PyDeck layer
     layer = pdk.Layer(
         "ScatterplotLayer",
         data=df_map,
@@ -359,4 +366,5 @@ st.markdown("""
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>إعداد:</b> لؤي الحمادة</p>
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>للتواصل:</b> alhammada.luay@gmail.com</p>
 """, unsafe_allow_html=True)
+
 

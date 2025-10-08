@@ -39,7 +39,7 @@ st.set_page_config(
 
 # --- CORRECTION: Assuming local file 'under_18_9.csv' is correct ---
 # A better practice would be to use @st.cache_data
-@st.cache_data
+# @st.cache_data
 
 url = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/refs/heads/main/under_18_9_en.csv"
 
@@ -546,3 +546,4 @@ Statistical Report from the Investigation Branch and Air Force Intelligence Reco
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>Contact:</b> alhammada.luay@gmail.com</p>
 
 """, unsafe_allow_html=True)
+

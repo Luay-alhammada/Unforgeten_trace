@@ -309,42 +309,47 @@ with col_chart_5:
     
     if 'Place of Arrest' in df_filtered.columns:
         # Count values from the filtered DataFrame
-        bar_counts = df_filtered['Place of Arrest'].value_counts().head(15).sort_values(ascending=False)
+        # IMPORTANT: Use ascending=True so the largest bar appears at the top of the chart.
+        bar_counts = df_filtered['Place of Arrest'].value_counts().head(15).sort_values(ascending=True)
 
         if not bar_counts.empty:
-            # Prepare labels for the x-axis
+            # Prepare labels for the y-axis (now that the chart is horizontal)
             labels = [
                 get_display(arabic_reshaper.reshape(f"{cat}"))
                 for cat in bar_counts.index
             ]
 
-            # Create the vertical bar chart
+            # Create the horizontal bar chart
             fig, ax = plt.subplots(figsize=(14, 8))
-            bars = ax.bar(labels, bar_counts.values)
+            
+            # CHANGE 1: Use barh for horizontal bars
+            bars = ax.barh(labels, bar_counts.values)
 
-            # Add the value labels on top of each bar
+            # CHANGE 2: Adjust label placement for horizontal bars
             for bar in bars:
-                height = bar.get_height()
-                ax.text(bar.get_x() + bar.get_width()/2, height + 2, f'{int(height)}', 
-                        ha='center', va='bottom', fontsize=14)
+                width = bar.get_width() # For barh, width is the bar length (the count)
+                label_x_pos = width + 7 # Position text slightly past the end of the bar
+                ax.text(label_x_pos, bar.get_y() + bar.get_height()/2, f'{int(width)}', 
+                        va='center', ha='left', fontsize=16) # ha='left' anchors the text after the bar
 
-            # Rotate x-axis labels
-            ax.tick_params(axis='x', labelsize=16, rotation=45, labelrotation=45)
-            ax.tick_params(axis='y', labelsize=14)
+            # CHANGE 3: Update tick configuration (Y-axis labels are fine, X-axis ticks are removed)
+            ax.tick_params(axis='y', labelsize=18)
+            ax.set_xlabel('')    # Remove X-axis label
+            ax.set_xticks([])    # Remove X-axis tick marks
+            # Original rotation is removed because X-axis is now removed
 
-            # Remove spines for a cleaner look
-            ax.spines[['top', 'right']].set_visible(False)
+            # Remove spines for a cleaner look (including the bottom one now that there are no x-ticks)
+            ax.spines[['top', 'right', 'bottom', 'left']].set_visible(False)
 
-            # Add horizontal gridlines
-            plt.grid(axis='y', color='lightgray', linestyle='--', linewidth=0.5, alpha=0.7)
+            # CHANGE 4: Add vertical gridlines (axis='x')
+            plt.grid(axis='x', color='lightgray', linestyle='--', linewidth=0.5, alpha=0.7)
 
-            # CORRECTION: Removed plt.tight_layout() here for better Arabic label display.
+            # Removed plt.tight_layout() as per previous discussion for Arabic label display.
             st.pyplot(fig)
         else:
              st.info("No 'Place of Arrest' data for the selected year.")
     else:
         st.warning("Column 'Place of Arrest' not found in the data.")
-
 
 with col_text_4:
     st.markdown("<h4 style='text-align: left;'>4 - The Charges</h4>", unsafe_allow_html=True)
@@ -546,4 +551,5 @@ Statistical Report from the Investigation Branch and Air Force Intelligence Reco
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>Contact:</b> alhammada.luay@gmail.com</p>
 
 """, unsafe_allow_html=True)
+
 

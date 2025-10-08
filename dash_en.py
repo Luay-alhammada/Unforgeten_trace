@@ -77,7 +77,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 # -------------------------------
 # CORRECTION: Removed 'col4' which was declared but never used,
 # and re-ordered the columns for a clear Left (col1), Middle (col2), Right (col3) flow.
-col1, col2, col3 = st.columns([1, 4, 4]) 
+col1, col2, col3, col4 = st.columns([1, 4,1, 4]) 
 
 # -------------------------------
 # Left Column: Filters
@@ -165,7 +165,7 @@ About 40% of the names include information about their birthplace.
 # -------------------------------
 # Right Column: Text / Introduction
 # -------------------------------
-with col3:
+with col4:
     st.markdown("<h3>Introduction</h3>", unsafe_allow_html=True)
     st.markdown("""
 <div>
@@ -551,5 +551,6 @@ Statistical Report from the Investigation Branch and Air Force Intelligence Reco
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>Contact:</b> alhammada.luay@gmail.com</p>
 
 """, unsafe_allow_html=True)
+
 
 

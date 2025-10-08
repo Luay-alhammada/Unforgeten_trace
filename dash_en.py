@@ -40,15 +40,14 @@ st.set_page_config(
 # --- CORRECTION: Assuming local file 'under_18_9.csv' is correct ---
 # A better practice would be to use @st.cache_data
 @st.cache_data
-def load_local_data(file_path):
-     return pd.read_csv(file_path)
 
-# Load data (replace with your local file path or the commented-out remote code if needed)
-try:
-    df = load_local_data("under_18_9_en.csv")
-except FileNotFoundError:
-    st.error("Error: 'under_18_9.csv' not found. Please ensure the file is in the correct directory.")
-    st.stop()
+url = "https://raw.githubusercontent.com/Luay-alhammada/Unforgeten_trace/refs/heads/main/under_18_9_en.csv"
+
+@st.cache_data
+def load_data(url):
+    return pd.read_csv(url)
+
+df = load_data(url)
 
 
 # Data Preprocessing
@@ -545,4 +544,5 @@ Statistical Report from the Investigation Branch and Air Force Intelligence Reco
 </p>
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>Prepared by:</b> Luay Al-Hammada</p>
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>Contact:</b> alhammada.luay@gmail.com</p>
+
 """, unsafe_allow_html=True)

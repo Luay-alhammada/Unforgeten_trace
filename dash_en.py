@@ -65,9 +65,9 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 st.markdown("""
 <div style='text-align: left;'>
-<h4>• <b>Topic:</b> Violations against children (under the age of 18)</h4>
-<h4>• <b>Time Period:</b> 2011 to 2016</h4>
-<h4>• <b>Total Records:</b> 1600 entries</h4>
+<h5>• <b>Topic:</b> Violations against children (under the age of 18)</h5>
+<h5>• <b>Time Period:</b> 2011 to 2016</h5>
+<h5>• <b>Total Records:</b> 1600 entries</h5>
 </div>
 """, unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
@@ -292,7 +292,7 @@ with col_chart_3:
 col_left_spacer2, col_chart_5, col_right_spacer2, col_text_4 = st.columns([1, 4, 1, 4])
 
 with col_chart_5:
-    st.markdown("<h5 style='text-align: left;'>5 - Places of Detention in Air Force Intelligence</h5>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align: left;'>5 - Places of Detention in Air Force Intelligence</h4>", unsafe_allow_html=True)
     st.markdown(
         """
         <div style='text-align: left; font-size: 18px; line-height: 1.8;'>
@@ -551,6 +551,7 @@ Statistical Report from the Investigation Branch and Air Force Intelligence Reco
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>Contact:</b> alhammada.luay@gmail.com</p>
 
 """, unsafe_allow_html=True)
+
 
 
 

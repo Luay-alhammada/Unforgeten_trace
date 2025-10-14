@@ -320,7 +320,7 @@ with col_chart_5:
             ]
 
             # Create the horizontal bar chart
-            fig, ax = plt.subplots(figsize=(14, 8))
+            fig, ax = plt.subplots(figsize=(16, 10))
             
             # CHANGE 1: Use barh for horizontal bars
             bars = ax.barh(labels, bar_counts.values)
@@ -551,6 +551,7 @@ Statistical Report from the Investigation Branch and Air Force Intelligence Reco
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>Contact:</b> alhammada.luay@gmail.com</p>
 
 """, unsafe_allow_html=True)
+
 
 
 

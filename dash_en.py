@@ -419,7 +419,7 @@ with col_chart_6:
             ]
 
             # Create the horizontal bar chart
-            fig, ax = plt.subplots(figsize=(14, 8))
+            fig, ax = plt.subplots(figsize=(16, 10))
             bars = ax.barh(labels, bar_counts.values)
 
             # Add count values to the right of the bars
@@ -465,11 +465,11 @@ with col_chart_9:
             counts_monthly = valid_dates_df.groupby(valid_dates_df['date_in'].dt.to_period("M")).size()
             counts_monthly.index = counts_monthly.index.to_timestamp()
 
-            fig, ax = plt.subplots(figsize=(16, 8))
+            fig, ax = plt.subplots(figsize=(16, 10))
             ax.plot(counts_monthly.index, counts_monthly.values, marker='o', color='royalblue')
             ax.set_title(f"Number of Records per Month ({selected_year_str})", fontsize=12)
-            ax.set_xlabel("Month", fontsize=10)
-            ax.set_ylabel("Count", fontsize=10)
+            ax.set_xlabel("Month", fontsize=12)
+            ax.set_ylabel("Count", fontsize=12)
             plt.xticks(rotation=60)
             plt.grid(True)
             st.pyplot(fig)
@@ -551,6 +551,7 @@ Statistical Report from the Investigation Branch and Air Force Intelligence Reco
 <p style='text-align:center;font-size:14px;color:gray;'>• <b>Contact:</b> alhammada.luay@gmail.com</p>
 
 """, unsafe_allow_html=True)
+
 
 
 
